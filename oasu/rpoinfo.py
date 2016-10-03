@@ -238,6 +238,15 @@ class RpoInfoOperation:
             self._soft_name = self._data[14]
             self._soft_version = self._data[15]
 
+    # Системный метод: Размер данных
+    def __len__(self):
+        return len(self._data)
+
+    # Системный метод: Получить значение элемента
+    def __getitem__(self, index):
+        if type(index) == int and (index < len(self)):
+            return self._data[index]
+
     # Имя операции
     @property
     def oper_name(self):
@@ -562,6 +571,11 @@ class RpoInfoMail:
             raise StopIteration
         self._ind += 1
         return self._data[self._ind]
+
+    # Системный метод: Получить значение элемента
+    def __getitem__(self, index):
+        if type(index) == int and (index < len(self)):
+            return self._data[index]
 
     @property
     def data(self):
