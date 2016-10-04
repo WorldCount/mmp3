@@ -492,10 +492,25 @@ class RpoInfoMail:
     # Возвращает количество дней в пути
     def days_of_path(self):
         if self._info['LastDate'] and self._info['FirstDate']:
-            first = datetime.strptime(self._info['FirstDate'], '%d.%m.%Y %H:%M:%S')
-            last = datetime.strptime(self._info['LastDate'], '%d.%m.%Y %H:%M:%S')
+            try:
+                first = datetime.strptime(self._info['FirstDate'], '%d.%m.%Y %H:%M:%S')
+            except ValueError:
+                try:
+                    first = datetime.strptime(self._info['FirstDate'], '%d.%m.%Y')
+                except ValueError:
+                    first = datetime.now()
+
+            try:
+                last = datetime.strptime(self._info['LastDate'], '%d.%m.%Y %H:%M:%S')
+            except ValueError:
+                try:
+                    last = datetime.strptime(self._info['LastDate'], '%d.%m.%Y')
+                except ValueError:
+                    last = datetime.now()
+
             range_date = last - first
             hour = range_date.seconds // (60 * 60)
+
             if hour:
                 return '%sд %sч' % (range_date.days, hour)
             else:
