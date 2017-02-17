@@ -434,8 +434,8 @@ class RpoInfoMail:
                       'AddrIndex': '', 'AddrCity': '', 'AddrArea': '',
                       'MailMass': '', 'Value': '', 'Payment': '',
                       'FirstDate': '', 'LastDate': '',
-                      'Reception': '', 'Delivery': '', 'Arrived': '', 'Return': '',
-                      'DaysOfPath': ''}
+                      'Reception': '', 'Handed': '', 'Arrived': '', 'Return': '',
+                      'DaysOfPath': '', 'Delivery': '', 'Left': ''}
 
         if barcode:
             self._info['Barcode'] = barcode
@@ -528,11 +528,18 @@ class RpoInfoMail:
         if oper.oper_name == 'Обработка' and oper.oper_attr == 'Прибыло в место вручения':
             self._info['Arrived'] = oper.oper_date
 
+        if oper.oper_name == 'Доставка' and oper.oper_attr == 'Доставлено в почтовый ящик':
+            self._info['Delivery'] = oper.oper_date
+
+        if oper.oper_name == 'Обработка' and oper.oper_attr == 'Покинуло место приёма' \
+                and oper.oper_index == self._info['AddrIndex']:
+            self._info['Left'] = oper.oper_date
+
         if oper.oper_name == 'Возврат':
             self._info['Return'] = oper.oper_date
 
         if oper.oper_name == 'Вручение':
-            self._info['Delivery'] = oper.oper_date
+            self._info['Handed'] = oper.oper_date
 
             if not self._info['AddrIndex'] and oper.oper_index:
                 self._info['AddrIndex'] = oper.oper_index
