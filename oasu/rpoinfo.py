@@ -79,7 +79,13 @@ class RpoInfo:
         if len(data) != 0:
             try:
                 # Информация по отправлению
-                self.__info = self.__grab.doc.select('//body//p[@class="page_TEXT"]').text().split(':')[1].strip()
+                info = self.__grab.doc.select('//body//p[@class="page_TEXT"]')
+                value = info[0].text()
+                if len(value) == 0:
+                    text = info[1].text().split('[')[0].split(':')[1].strip()
+                else:
+                    text = info[0].text().split(':')[1].strip()
+                self.__info = text
             except IndexError:
                 self.__info = ''
 
