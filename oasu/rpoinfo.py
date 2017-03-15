@@ -440,8 +440,8 @@ class RpoInfoMail:
                       'AddrIndex': '', 'AddrCity': '', 'AddrArea': '',
                       'MailMass': '', 'Value': '', 'Payment': '',
                       'FirstDate': '', 'LastDate': '',
-                      'Reception': '', 'Handed': '', 'Arrived': '', 'Return': '',
-                      'DaysOfPath': '', 'Delivery': '', 'Left': ''}
+                      'Reception': '', 'Handed': '', 'Arrived': '', 'Arrived_Soft': '', 'Return': '',
+                      'DaysOfPath': '', 'Delivery': '', 'ReturnLeft': '', 'SendLeft': ''}
 
         if barcode:
             self._info['Barcode'] = barcode
@@ -533,13 +533,17 @@ class RpoInfoMail:
 
         if oper.oper_name == 'Обработка' and oper.oper_attr == 'Прибыло в место вручения':
             self._info['Arrived'] = oper.oper_date
+            self._info['Arrived_Soft'] = oper.soft_version
 
         if oper.oper_name == 'Доставка' and oper.oper_attr == 'Доставлено в почтовый ящик':
             self._info['Delivery'] = oper.oper_date
 
-        if oper.oper_name == 'Обработка' and oper.oper_attr == 'Покинуло место приёма' \
-                and oper.oper_index == self._info['AddrIndex']:
-            self._info['Left'] = oper.oper_date
+        if oper.oper_name == 'Обработка':
+            if oper.oper_attr == 'Покинуло место приёма' or oper.oper_attr == 'Покинуло сортировочный центр':
+                if oper.oper_index == self._info['SendIndex']:
+                    self._info['SendLeft'] = oper.oper_date
+                if oper.oper_index == self._info['AddrIndex']:
+                    self._info['ReturnLeft'] = oper.oper_date
 
         if oper.oper_name == 'Возврат':
             self._info['Return'] = oper.oper_date
